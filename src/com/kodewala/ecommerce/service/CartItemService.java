@@ -7,6 +7,7 @@ import java.util.Map;
 
 import com.kodewala.ecommerce.exception.InsufficientStockException;
 import com.kodewala.ecommerce.exception.InvalidQuantityException;
+import com.kodewala.ecommerce.exception.ProductNotFoundException;
 import com.kodewala.ecommerce.model.CartItem;
 import com.kodewala.ecommerce.model.Product;
 
@@ -46,7 +47,30 @@ public class CartItemService {
 		System.out.println(" Added to cart "+ product.getProductName() + " "  + quantity);
 	}
 	
-	public void removeFromCart(int customerId, int qty) {
-		
-	}
+	// Remove product from cart
+		public void removeFromCart(int customerId, int productId) {
+			List<CartItem> cart = getOrCreateCart(customerId);
+			/* if(cart.isEmpty()) return; */
+			boolean removed = cart.removeIf(item -> item.getProductId() == productId);
+			if (!removed) {
+				throw new ProductNotFoundException("Product [ID: " + productId + "] not found in your cart.");
+			}
+			System.out.println("  Product [ID: " + productId + "] removed from cart.");
+		}
+
+		// Increase quantity
+		public void increaseQuantity(int customerId, int productId, int qty) {
+			if (qty <= 0)
+				throw new InvalidQuantityException("InvalidQuantityException: Qty must be positive.");
+			List<CartItem> cart = getOrCreateCart(customerId);
+			CartItem item = findCartItem(cart, productId);
+			Product product = productService.getProduct(productId);
+			int newQty = item.getQuantity() + qty;
+			if (product.getQuantity() < newQty) {
+				throw new InsufficientStockException(
+						"InsufficientStockException: Only " + product.getQuantity() + " unit(s) available.");
+			}
+			item.setQuantity(newQty);
+			System.out.println("  Quantity increased to " + newQty + " for '" + item.getProductName() + "'");
+		}
 }
