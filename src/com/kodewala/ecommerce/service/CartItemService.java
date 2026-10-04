@@ -71,6 +71,15 @@ public class CartItemService {
 						"InsufficientStockException: Only " + product.getQuantity() + " unit(s) available.");
 			}
 			item.setQuantity(newQty);
+			
+			item.setQuantity(newQty);item.setQuantity(newQty);
+			item.setQuantity(newQty);
+			item.setQuantity(newQty);
 			System.out.println("  Quantity increased to " + newQty + " for '" + item.getProductName() + "'");
+		}
+
+		private CartItem findCartItem(List<CartItem> cart, int productId) {
+			// TODO Auto-generated method stub
+			return null;
 		}
 }
